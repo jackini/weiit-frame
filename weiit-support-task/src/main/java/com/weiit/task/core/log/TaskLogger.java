@@ -31,15 +31,15 @@ public class TaskLogger {
 
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(xxlJobLoggerFormat.format(new Date())).append(" ")
-            .append("["+ callInfo.getClassName() + "#" + callInfo.getMethodName() +"]").append("-")
-            .append("["+ callInfo.getLineNumber() +"]").append("-")
-            .append("["+ Thread.currentThread().getName() +"]").append(" ")
-            .append(appendLog!=null?appendLog:"");
+                .append("[" + callInfo.getClassName() + "#" + callInfo.getMethodName() + "]").append("-")
+                .append("[" + callInfo.getLineNumber() + "]").append("-")
+                .append("[" + Thread.currentThread().getName() + "]").append(" ")
+                .append(appendLog != null ? appendLog : "");
         String formatAppendLog = stringBuffer.toString();
 
         // appendlog
         String logFileName = TaskFileAppender.contextHolder.get();
-        if (logFileName!=null && logFileName.trim().length()>0) {
+        if (logFileName != null && logFileName.trim().length() > 0) {
             TaskFileAppender.appendLog(logFileName, formatAppendLog);
         } else {
             logger.info(">>>>>>>>>>> {}", formatAppendLog);
@@ -49,13 +49,13 @@ public class TaskLogger {
     /**
      * append log with pattern
      *
-     * @param appendLogPattern  like "aaa {0} bbb {1} ccc"
-     * @param appendLogArguments    like "111, true"
+     * @param appendLogPattern   like "aaa {0} bbb {1} ccc"
+     * @param appendLogArguments like "111, true"
      */
-    public static void log(String appendLogPattern, Object ... appendLogArguments) {
+    public static void log(String appendLogPattern, Object... appendLogArguments) {
 
         String appendLog = appendLogPattern;
-        if (appendLogArguments!=null && appendLogArguments.length>0) {
+        if (appendLogArguments != null && appendLogArguments.length > 0) {
             appendLog = MessageFormat.format(appendLogPattern, appendLogArguments);
         }
 

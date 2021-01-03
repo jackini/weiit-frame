@@ -18,7 +18,7 @@ public class ScriptJobHandler extends Task {
     private String gluesource;
     private GlueTypeEnum glueType;
 
-    public ScriptJobHandler(int jobId, long glueUpdatetime, String gluesource, GlueTypeEnum glueType){
+    public ScriptJobHandler(int jobId, long glueUpdatetime, String gluesource, GlueTypeEnum glueType) {
         this.jobId = jobId;
         this.glueUpdatetime = glueUpdatetime;
         this.gluesource = gluesource;
@@ -33,7 +33,7 @@ public class ScriptJobHandler extends Task {
     public ReturnT<String> execute(String param) throws Exception {
 
         if (!glueType.isScript()) {
-            return new ReturnT<String>(Task.FAIL.getCode(), "glueType["+ glueType +"] invalid.");
+            return new ReturnT<String>(Task.FAIL.getCode(), "glueType[" + glueType + "] invalid.");
         }
 
         // cmd
@@ -59,9 +59,9 @@ public class ScriptJobHandler extends Task {
         scriptParams[2] = String.valueOf(shardingVO.getTotal());
 
         // invoke
-        TaskLogger.log("----------- script file:"+ scriptFileName +" -----------");
+        TaskLogger.log("----------- script file:" + scriptFileName + " -----------");
         int exitValue = ScriptUtil.execToFile(cmd, scriptFileName, logFileName, scriptParams);
-        ReturnT<String> result = (exitValue==0)?Task.SUCCESS:new ReturnT<String>(Task.FAIL.getCode(), "script exit value("+exitValue+") is failed");
+        ReturnT<String> result = (exitValue == 0) ? Task.SUCCESS : new ReturnT<String>(Task.FAIL.getCode(), "script exit value(" + exitValue + ") is failed");
         return result;
     }
 
