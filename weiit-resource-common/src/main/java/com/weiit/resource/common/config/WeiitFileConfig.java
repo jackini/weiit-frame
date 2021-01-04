@@ -12,7 +12,10 @@ import com.weiit.resource.common.utils.WeiitUtil;
  */
 public class WeiitFileConfig {
 
-    public static String fileUploadOpen = "2";//1表示开启腾讯云万象优图存储、2表示开启阿里云oss存储
+    /**
+     * 1表示开启腾讯云万象优图存储、2表示开启阿里云oss存储、3表示开启本地存储
+     */
+    public static String fileUploadOpen = "3";
 
     /**
      * 腾讯云万象优图配置
@@ -34,6 +37,13 @@ public class WeiitFileConfig {
     public static String ossBucketName = "sharenice";
     public static String ossPre = "life";
     public static String ossDomain = "https://sharenice.oss-cn-shenzhen.aliyuncs.com/";
+
+    /**
+     * 本地图片存储配置
+     */
+    public static String localPath = "";
+    public static String localResourcePrefix = "/profile";
+    public static String localDomain = "";
 
     public static String getFileUploadOpen() {
         if (WeiitUtil.getPropertiesKey("fileUploadOpen") != null) {
@@ -133,5 +143,24 @@ public class WeiitFileConfig {
         return ossDomain;
     }
 
+    public static String getLocalPath() {
+        if (WeiitUtil.getPropertiesKey("localPath") != null) {
+            localPath = WeiitUtil.getPropertiesKey("localPath");
+        }
+        return localPath;
+    }
 
+    public static String getLocalResourcePrefix() {
+        if (WeiitUtil.getPropertiesKey("localResourcePrefix") != null) {
+            localResourcePrefix = WeiitUtil.getPropertiesKey("localResourcePrefix");
+        }
+        return localResourcePrefix;
+    }
+
+    public static String getLocalDomain() {
+        if (WeiitUtil.getPropertiesKey("localDomain") != null) {
+            localDomain = WeiitUtil.getPropertiesKey("localDomain");
+        }
+        return localDomain;
+    }
 }

@@ -1,12 +1,15 @@
 package com.weiit.resource.common.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.UUID;
 
+import cn.hutool.core.util.IdUtil;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.PutObjectResult;
 import com.qcloud.cos.COSClient;
@@ -16,6 +19,11 @@ import com.qcloud.cos.request.UploadFileRequest;
 import com.qcloud.cos.sign.Credentials;
 import com.weiit.resource.common.config.WeiitFileConfig;
 
+import jdk.nashorn.internal.objects.Global;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import com.weiit.resource.common.enums.MimeTypeUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -66,8 +74,8 @@ public class WeiitFileUtil {
 
     }
 
-    public String uploadFileByQcloud(byte[] data, String fileFormat,
-                                     String cosFilePath) {
+    public static String uploadFileByQcloud(byte[] data, String fileFormat,
+                                            String cosFilePath) {
         // 初始化客户端配置
         ClientConfig clientConfig = new ClientConfig();
         // 设置bucket所在的区域，比如广州(gz), 天津(tj)
@@ -96,7 +104,7 @@ public class WeiitFileUtil {
      * @return
      * @throws IOException
      */
-    public String uploadFileByQcloud(MultipartFile file) throws IOException {
+    public static String uploadFileByQcloud(MultipartFile file) throws IOException {
 
         byte[] data = file.getBytes();
         String oldFileName = file.getOriginalFilename();
@@ -131,7 +139,7 @@ public class WeiitFileUtil {
 
     }
 
-    public String uploadFileByQcloud(MultipartFile file, String cosFilePath)
+    public static String uploadFileByQcloud(MultipartFile file, String cosFilePath)
             throws IOException {
 
         byte[] data = file.getBytes();
@@ -165,7 +173,7 @@ public class WeiitFileUtil {
      * @param fileFormat 文件后缀
      * @return
      */
-    public String uploadFileByAliyun(MultipartFile file) throws IOException {
+    public static String uploadFileByAliyun(MultipartFile file) throws IOException {
 
         byte[] data = file.getBytes();
         String oldFileName = file.getOriginalFilename();
@@ -200,7 +208,7 @@ public class WeiitFileUtil {
 
     }
 
-    public String uploadFileByAliyun(MultipartFile file, String cosFilePath)
+    public static String uploadFileByAliyun(MultipartFile file, String cosFilePath)
             throws IOException {
 
         byte[] data = file.getBytes();
@@ -234,7 +242,7 @@ public class WeiitFileUtil {
      * @param fileFormat 文件后缀
      * @return
      */
-    public String uploadFileByAliyun(byte[] data, String fileFormat) {
+    public static String uploadFileByAliyun(byte[] data, String fileFormat) {
 
         // Endpoint以杭州为例，其它Region请按实际情况填写。
         String endpoint = WeiitFileConfig.getOssEndPoint();
@@ -264,8 +272,8 @@ public class WeiitFileUtil {
 
     }
 
-    public String uploadFileByAliyun(byte[] data, String fileFormat,
-                                     String cosFilePath) {
+    public static String uploadFileByAliyun(byte[] data, String fileFormat,
+                                            String cosFilePath) {
 
         // Endpoint以杭州为例，其它Region请按实际情况填写。
         String endpoint = WeiitFileConfig.getOssEndPoint();
@@ -290,14 +298,67 @@ public class WeiitFileUtil {
     /**
      * 图片存储方式四：本地存储服务
      *
+     * @param file
+     * @return
+     */
+    public static String uploadFileByLocal(MultipartFile file) throws IOException {
+        String fileName = extractFilename(file);
+
+        File desc = getAbsoluteFile(WeiitFileConfig.getLocalPath(), fileName);
+        file.transferTo(desc);
+        return WeiitFileConfig.getLocalDomain() + "/" + WeiitFileConfig.getLocalResourcePrefix() + "/" + fileName;
+    }
+
+    /**
+     * 图片存储方式四：本地存储服务
+     *
      * @param data
      * @param fileFormat 文件后缀
      * @return
      */
-    public String uploadFileByLocal(byte[] data, String fileFormat) {
+    public static String uploadFileByLocal(byte[] data, String fileFormat) {
 
         return null;
+    }
 
+    private static String getPathFileName(String uploadDir, String fileName) throws IOException {
+        int dirLastIndex = WeiitFileConfig.getLocalDomain().length() + 1;
+        String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
+        String pathFileName = WeiitFileConfig.getLocalResourcePrefix() + "/" + currentDir + "/" + fileName;
+        return pathFileName;
+    }
+
+    /**
+     * 编码文件名
+     */
+    public static String extractFilename(MultipartFile file) {
+        String extension = getExtension(file);
+        return DateUtil.dateToString(new Date(), "yyyy/MM/dd") + "/" + IdUtil.fastUUID() + "." + extension;
+    }
+
+    /**
+     * 获取文件名的后缀
+     *
+     * @param file 表单文件
+     * @return 后缀名
+     */
+    public static String getExtension(MultipartFile file) {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (StringUtils.isEmpty(extension)) {
+            extension = MimeTypeUtils.getExtension(file.getContentType());
+        }
+        return extension;
+    }
+
+    private static File getAbsoluteFile(String uploadDir, String fileName) throws IOException {
+        File desc = new File(uploadDir + File.separator + fileName);
+
+        if (!desc.exists()) {
+            if (!desc.getParentFile().exists()) {
+                desc.getParentFile().mkdirs();
+            }
+        }
+        return desc;
     }
 
     public static void main(String[] args) throws FileNotFoundException {

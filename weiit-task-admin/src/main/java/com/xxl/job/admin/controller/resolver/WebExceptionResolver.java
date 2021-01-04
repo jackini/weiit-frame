@@ -8,7 +8,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.weiit.task.core.biz.model.ReturnT;
-import com.weiit.task.core.util.JacksonUtil; 
+import com.weiit.task.core.util.JacksonUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,43 +17,44 @@ import java.io.IOException;
 
 /**
  * common exception resolver
+ *
  * @author xuxueli 2016-1-6 19:22:18
  */
 public class WebExceptionResolver implements HandlerExceptionResolver {
-	private static transient Logger logger = LoggerFactory.getLogger(WebExceptionResolver.class);
+    private static transient Logger logger = LoggerFactory.getLogger(WebExceptionResolver.class);
 
-	@Override
-	public ModelAndView resolveException(HttpServletRequest request,
-			HttpServletResponse response, Object handler, Exception ex) {
-		logger.error("WebExceptionResolver:{}", ex);
+    @Override
+    public ModelAndView resolveException(HttpServletRequest request,
+                                         HttpServletResponse response, Object handler, Exception ex) {
+        logger.error("WebExceptionResolver:{}", ex);
 
-		// if json
-		boolean isJson = false;
-		HandlerMethod method = (HandlerMethod)handler;
-		ResponseBody responseBody = method.getMethodAnnotation(ResponseBody.class);
-		if (responseBody != null) {
-			isJson = true;
-		}
+        // if json
+        boolean isJson = false;
+        HandlerMethod method = (HandlerMethod) handler;
+        ResponseBody responseBody = method.getMethodAnnotation(ResponseBody.class);
+        if (responseBody != null) {
+            isJson = true;
+        }
 
-		// error result
-		ReturnT<String> errorResult = new ReturnT<String>(ReturnT.FAIL_CODE, ex.toString().replaceAll("\n", "<br/>"));
+        // error result
+        ReturnT<String> errorResult = new ReturnT<String>(ReturnT.FAIL_CODE, ex.toString().replaceAll("\n", "<br/>"));
 
-		// response
-		ModelAndView mv = new ModelAndView();
-		if (isJson) {
-			try {
-				response.setContentType("application/json;charset=utf-8");
-				response.getWriter().print(JacksonUtil.writeValueAsString(errorResult));
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-			return mv;
-		} else {
+        // response
+        ModelAndView mv = new ModelAndView();
+        if (isJson) {
+            try {
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().print(JacksonUtil.writeValueAsString(errorResult));
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+            return mv;
+        } else {
 
-			mv.addObject("exceptionMsg", errorResult.getMsg());
-			mv.setViewName("/common/common.exception");
-			return mv;
-		}
-	}
-	
+            mv.addObject("exceptionMsg", errorResult.getMsg());
+            mv.setViewName("/common/common.exception");
+            return mv;
+        }
+    }
+
 }

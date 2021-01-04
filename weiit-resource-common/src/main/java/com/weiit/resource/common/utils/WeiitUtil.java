@@ -31,9 +31,9 @@ public class WeiitUtil {
     /**
      * 短信公共方法，具体要依据WeiitSMSConfig的open值决定调用哪个服务商的短信支持
      *
-     * @param mobileNums表示手机号码   ，可以是多个，多个用逗号分开，比如“15622720546,18565660736”
-     * @param templateId表示短信模板id ，模板中存在{1}，{2}这样的占位符
-     * @param contents           表示需要替换的内容，是一个字符串数组，每个字符串数组按照顺利会替换模板中的占位符{1}，{2}
+     * @param mobileNums 表示手机号码   ，可以是多个，多个用逗号分开，比如“15622720546,18565660736”
+     * @param templateId 表示短信模板id ，模板中存在{1}，{2}这样的占位符
+     * @param contents   表示需要替换的内容，是一个字符串数组，每个字符串数组按照顺利会替换模板中的占位符{1}，{2}
      * @return 发送成功或者发送失败
      */
     public static boolean sendMobileMessage(String mobileNums,
@@ -60,14 +60,13 @@ public class WeiitUtil {
      * @return 图片上传后端图片地址
      */
     public static String uploadFile(byte[] data, String fileFormat) throws IOException {
-
-        WeiitFileUtil util = new WeiitFileUtil();
-
         switch (Integer.parseInt(WeiitFileConfig.getFileUploadOpen())) {
             case 1:
-                return util.uploadFileByQcloud(data, fileFormat);
+                return WeiitFileUtil.uploadFileByQcloud(data, fileFormat);
             case 2:
-                return util.uploadFileByAliyun(data, fileFormat);
+                return WeiitFileUtil.uploadFileByAliyun(data, fileFormat);
+            case 3:
+                return WeiitFileUtil.uploadFileByLocal(data, fileFormat);
             default:
                 return null;
         }
@@ -75,14 +74,11 @@ public class WeiitUtil {
     }
 
     public static String uploadFile(byte[] data, String fileFormat, String cosFilePath) throws IOException {
-
-        WeiitFileUtil util = new WeiitFileUtil();
-
         switch (Integer.parseInt(WeiitFileConfig.getFileUploadOpen())) {
             case 1:
-                return util.uploadFileByQcloud(data, fileFormat, cosFilePath);
+                return WeiitFileUtil.uploadFileByQcloud(data, fileFormat, cosFilePath);
             case 2:
-                return util.uploadFileByAliyun(data, fileFormat, cosFilePath);
+                return WeiitFileUtil.uploadFileByAliyun(data, fileFormat, cosFilePath);
             default:
                 return null;
         }
@@ -97,29 +93,24 @@ public class WeiitUtil {
      * @throws IOException
      */
     public static String uploadFile(MultipartFile file) throws IOException {
-
-        WeiitFileUtil util = new WeiitFileUtil();
-
         switch (Integer.parseInt(WeiitFileConfig.getFileUploadOpen())) {
             case 1:
-                return util.uploadFileByQcloud(file);
+                return WeiitFileUtil.uploadFileByQcloud(file);
             case 2:
-                return util.uploadFileByAliyun(file);
+                return WeiitFileUtil.uploadFileByAliyun(file);
+            case 3:
+                return WeiitFileUtil.uploadFileByLocal(file);
             default:
                 return null;
         }
-
     }
 
     public static String uploadFile(MultipartFile file, String cosFilePath) throws IOException {
-
-        WeiitFileUtil util = new WeiitFileUtil();
-
         switch (Integer.parseInt(WeiitFileConfig.getFileUploadOpen())) {
             case 1:
-                return util.uploadFileByQcloud(file, cosFilePath);
+                return WeiitFileUtil.uploadFileByQcloud(file, cosFilePath);
             case 2:
-                return util.uploadFileByAliyun(file, cosFilePath);
+                return WeiitFileUtil.uploadFileByAliyun(file, cosFilePath);
             default:
                 return null;
         }
@@ -127,16 +118,16 @@ public class WeiitUtil {
     }
 
     public static String getFileDomain() {
-
         switch (Integer.parseInt(WeiitFileConfig.getFileUploadOpen())) {
             case 1:
                 return WeiitFileConfig.getCosDomain();
             case 2:
                 return WeiitFileConfig.getOssDomain();
+            case 3:
+                return WeiitFileConfig.getLocalDomain();
             default:
                 return null;
         }
-
     }
 
     /**

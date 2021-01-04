@@ -20,25 +20,25 @@ import java.util.HashMap;
  */
 public class CookieInterceptor extends HandlerInterceptorAdapter {
 
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView modelAndView) throws Exception {
 
-		// cookie
-		if (modelAndView!=null && ArrayUtils.isNotEmpty(request.getCookies())) {
-			HashMap<String, Cookie> cookieMap = new HashMap<String, Cookie>();
-			for (Cookie ck : request.getCookies()) {
-				cookieMap.put(ck.getName(), ck);
-			}
-			modelAndView.addObject("cookieMap", cookieMap);
-		}
+        // cookie
+        if (modelAndView != null && ArrayUtils.isNotEmpty(request.getCookies())) {
+            HashMap<String, Cookie> cookieMap = new HashMap<String, Cookie>();
+            for (Cookie ck : request.getCookies()) {
+                cookieMap.put(ck.getName(), ck);
+            }
+            modelAndView.addObject("cookieMap", cookieMap);
+        }
 
-		// static method
-		if (modelAndView != null) {
-			modelAndView.addObject("I18nUtil", FtlUtil.generateStaticModel(I18nUtil.class.getName()));
-		}
-		
-		super.postHandle(request, response, handler, modelAndView);
-	}
-	
+        // static method
+        if (modelAndView != null) {
+            modelAndView.addObject("I18nUtil", FtlUtil.generateStaticModel(I18nUtil.class.getName()));
+        }
+
+        super.postHandle(request, response, handler, modelAndView);
+    }
+
 }
